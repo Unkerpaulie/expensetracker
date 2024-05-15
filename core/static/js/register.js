@@ -52,3 +52,19 @@ emailField.addEventListener("keyup", (e) => {
     } 
 })
 
+// show password toggle
+const passwordToggle = document.getElementById("passwordToggle");
+const passwordField = document.getElementById("password");
+const passwordField2 = document.getElementById("password2");
+
+passwordToggle.addEventListener("click", (e) => {
+    if (passwordToggle.textContent == "SHOW") {
+        passwordToggle.textContent = "HIDE";
+        passwordField.setAttribute("type", "text");
+        passwordField2.setAttribute("type", "text");
+    } else {
+        passwordToggle.textContent = "SHOW";
+        passwordField.setAttribute("type", "password");
+        passwordField2.setAttribute("type", "password"); 
+    }
+})
