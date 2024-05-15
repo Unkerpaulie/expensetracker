@@ -4,10 +4,12 @@ from django.views import View
 
 class RegisterView(View):
     def get(self, req):
-        return render(req, "authentication/register.html")
+        context = {"page": "register"}
+        return render(req, "authentication/register.html", context)
 
         
 class LoginView(View):
     def get(self, req):
-        return render(req, "authentication/login.html")
+        context = {"page": "login"}
+        return render(req, "authentication/login.html", context)
 

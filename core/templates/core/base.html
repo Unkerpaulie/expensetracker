@@ -22,7 +22,9 @@
 <div class="container-fluid">
   <div class="row">
 
-    {% include "core/_sidebar.html" %}
+    {% if request.user.is_authenticated %}
+      {% include "core/_sidebar.html" %}
+    {% endif %}
 
     {% block main %}
     {% endblock main %}
