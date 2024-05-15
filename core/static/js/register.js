@@ -68,3 +68,16 @@ passwordToggle.addEventListener("click", (e) => {
         passwordField2.setAttribute("type", "password"); 
     }
 })
+
+// confirm passsword match
+const passwordFeedback2 = document.getElementById("password2_feedback");
+passwordField2.addEventListener("keyup", (e) => {
+    passwordField2.classList.remove("is-invalid");
+    passwordFeedback2.style.display = "none";
+    passwordFeedback2.innerText = "";
+    if (passwordField.value !== passwordField2.value) {
+        passwordField2.classList.add("is-invalid");
+        passwordFeedback2.style.display = "block";
+        passwordFeedback2.innerText = "Passwords do not match";
+    }
+})

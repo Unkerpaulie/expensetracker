@@ -40,6 +40,17 @@ class EmailValidationView(View):
         return JsonResponse({"email_valid": True})
 
         
+class PasswordConfirmView(View):
+    def post(self, req):
+        data = json.loads(req.body)
+        password = data["password"]
+        password2 = data["password2"]
+
+        if password:
+            return JsonResponse({"email_error": "Please enter a valid email address."}, status=400)
+        return JsonResponse({"email_valid": True})
+
+        
 class LoginView(View):
     def get(self, req):
         context = {"page": "login"}
