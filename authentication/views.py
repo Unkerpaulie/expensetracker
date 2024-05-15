@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.views import View
 from django.contrib.auth.models import User
+from django.contrib import messages
 import json, re
 from django.http import JsonResponse
 
@@ -12,6 +13,12 @@ def validate_email(email):
 
 class RegisterView(View):
     def get(self, req):
+        context = {"page": "register"}
+        return render(req, "authentication/register.html", context)
+
+    def post(self, req):
+        messages.success(req, "Registration successful!")
+        messages.warning(req, "Registration warning!")
         context = {"page": "register"}
         return render(req, "authentication/register.html", context)
 

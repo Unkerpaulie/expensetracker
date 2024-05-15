@@ -9,6 +9,7 @@
         <div class="card-header"></div>
         <div class="card-body">
           <h4 class="card-title p-2">Register for a free account</h4>
+          {% include "core/_messages.html" %}
             <form action="" method="post">
                 {% csrf_token %}
                 <div class="form-group">
