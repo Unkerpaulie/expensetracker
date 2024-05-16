@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.views import View
 from django.contrib.auth.models import User
 from django.contrib import messages
@@ -17,14 +17,23 @@ class RegisterView(View):
         return render(req, "authentication/register.html", context)
 
     def post(self, req):
+        # info already valid
         data = req.POST
         username = data["username"]
         email = data["email"]
         password = data["password"]
 
-        messages.success(req, "Registration successful!")
-        messages.warning(req, "Registration warning!")
-        context = {"page": "register"}
+        user = User(username=username, email=email)
+        user.set_password(password)
+        user.save()
+        
+        if user.id:
+            messages.success(req, "Registration successful! You may now log in")
+            return redirect("auth:login")
+
+        # if an error occured, return user to form with values restored
+        messages.warning(req, "Registration failed! Please try again")
+        context = {"page": "register", "fieldvalues": data}
         return render(req, "authentication/register.html", context)
 
         
