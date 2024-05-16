@@ -17,6 +17,11 @@ class RegisterView(View):
         return render(req, "authentication/register.html", context)
 
     def post(self, req):
+        data = req.POST
+        username = data["username"]
+        email = data["email"]
+        password = data["password"]
+
         messages.success(req, "Registration successful!")
         messages.warning(req, "Registration warning!")
         context = {"page": "register"}
@@ -29,9 +34,9 @@ class UsernameValidationView(View):
         username = data["username"]
 
         if not str(username).isalnum():
-            return JsonResponse({"username_error": "Username must only contain numbers and letters."}, status=400)
+            return JsonResponse({"username_error": "Username must only contain numbers and letters."})
         elif User.objects.filter(username=username).exists():
-            return JsonResponse({"username_error": "Username already exists. Please choose another."}, status=409)
+            return JsonResponse({"username_error": "Username already exists. Please choose another."})
         return JsonResponse({"username_valid": True})
 
         
@@ -41,20 +46,9 @@ class EmailValidationView(View):
         email = data["email"]
 
         if not validate_email(email):
-            return JsonResponse({"email_error": "Please enter a valid email address."}, status=400)
+            return JsonResponse({"email_error": "Please enter a valid email address."})
         elif User.objects.filter(email=email).exists():
-            return JsonResponse({"email_error": "This email already exists. Please choose another."}, status=409)
-        return JsonResponse({"email_valid": True})
-
-        
-class PasswordConfirmView(View):
-    def post(self, req):
-        data = json.loads(req.body)
-        password = data["password"]
-        password2 = data["password2"]
-
-        if password:
-            return JsonResponse({"email_error": "Please enter a valid email address."}, status=400)
+            return JsonResponse({"email_error": "This email already exists. Please choose another."})
         return JsonResponse({"email_valid": True})
 
         

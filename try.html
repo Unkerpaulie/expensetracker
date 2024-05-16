@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <p id="changed"></p>
+    <p>Current list: <span id="list"></span></p>
+    <button onclick="add();">Add</button>
+    <button onclick="remove();">Remove</button>
+    <script>
+        let fruits = ["apple", "orange", "banana", "mango", "pear", "grape", "kiwi"];
+        let s = new Set()
+
+        const changed = document.getElementById("changed");
+        const list = document.getElementById("list");
+
+        function add() {
+            let el = fruits[Math.floor(Math.random()*fruits.length)];
+            s.add(el);
+            changed.textContent = `Added: ${el}`;
+            list.textContent = Array.from(s).join(', ');
+        }
+
+        function remove() {
+            let el = fruits[Math.floor(Math.random()*fruits.length)];
+            s.delete(el);
+            changed.textContent = `Removed: ${el}`;
+            list.textContent = Array.from(s).join(', ');
+        }
+
+
+    </script>
+</body>
+</html>
