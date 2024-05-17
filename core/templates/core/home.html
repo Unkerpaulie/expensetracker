@@ -1,8 +1,10 @@
 {% extends "core/base.html" %}
 
 {% block main %}
+{% if request.user.is_authenticated %}
 <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
-    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+  {% include "core/_messages.html" %}
+  <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
     <h1 class="h2">Dashboard</h1>
     <div class="btn-toolbar mb-2 mb-md-0">
       <div class="btn-group me-2">
@@ -147,4 +149,12 @@
     </table>
   </div>
 </main>
+{% else %}
+<main class="col-md-6 ms-sm-auto col-lg-8 px-md-4">
+  <h2 class="mt-5">Welcome to expense tracker</h2>
+  <p>Please <a href="{% url "auth:register" %}">register an account</a> to use the service.</p>
+  <p>If you already have an account, please <a href="{% url "auth:login" %}">log in</a>.</p>
+</main>
+<div class="col-md-3 col-lg-2"></div>
+{% endif %}
 {% endblock main %}
