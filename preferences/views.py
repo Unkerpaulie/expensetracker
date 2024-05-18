@@ -8,6 +8,8 @@ from .models import Preference
 
 @login_required(redirect_field_name=None)
 def home(req):
+    context = {"current_page": "Settings"}
+    context |= {"backlinks": [{"label": "Home", "url": "core:home"}]}
     # check if preference already exists
     if req.method == "POST":
         pref = Preference.objects.filter(user=req.user).first()
@@ -30,5 +32,5 @@ def home(req):
 
     currencies = [{"abbr": k, "name": v} for k, v in data.items()]
     pref = Preference.objects.filter(user=req.user).first()
-    context = {"currencies": currencies, "pref": pref}
+    context |= {"currencies": currencies, "pref": pref}
     return render(req, "preference/home.html", context)

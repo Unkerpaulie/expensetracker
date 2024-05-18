@@ -11,23 +11,15 @@ def validate_email(email):
     regex = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
     return re.match(regex, email) is not None
 
-def send_activation_email(user):
-    body = """
-Please follow the link provide to activate your account.
-"""
-    email = EmailMessage(
-        subject="Activate you Expense Tracke account",
-        body=body,
-        from_email="noreply@localhost.run",
-        to=user.email,
-    )
 
 class RegisterView(View):
     def get(self, req):
-        context = {"page": "register"}
+        context = {"current_page": "Register"}
         return render(req, "authentication/register.html", context)
 
     def post(self, req):
+        context = {"current_page": "Register"}
+        context |= {"backlinks": [{"label": "Home", "url": "core:home"}]}
         # info already valid
         data = req.POST
         username = data["username"]
@@ -46,7 +38,7 @@ class RegisterView(View):
 
         # if an error occured, return user to form with values restored
         messages.warning(req, "Registration failed! Please try again")
-        context = {"page": "register", "fieldvalues": data}
+        context |= {"fieldvalues": data}
         return render(req, "authentication/register.html", context)
 
         
@@ -76,17 +68,17 @@ class EmailValidationView(View):
         
 class LoginView(View):
     def get(self, req):
-        context = {"page": "login"}
+        context = {"current_page": "Log In"}
         return render(req, "authentication/login.html", context)
 
     def post(self, req):
+        context = {"current_page": "Log In"}
         # info already valid
         data = req.POST
         username = data["username"]
         password = data["password"]
 
         user = auth.authenticate(username=username, password=password)
-        # set up cnfirmation email to activate accout
 
         if user:
             auth.login(req, user)
@@ -95,7 +87,7 @@ class LoginView(View):
 
         # if an error occured, return user to form with values restored
         messages.warning(req, "Incorrect credentials. Please try again.")
-        context = {"page": "login", "fieldvalues": data}
+        context |= {"fieldvalues": data}
         return render(req, "authentication/login.html", context)
 
 

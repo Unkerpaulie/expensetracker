@@ -1,0 +1,9 @@
+<nav aria-label="breadcrumb" class="mt-2">
+    <ol class="breadcrumb">
+      {% for link in backlinks %}
+      <li class="breadcrumb-item"><a href="{% url link.url %}">{{ link.label }}</a></li>
+      {% endfor %}
+      <li class="breadcrumb-item active" aria-current="page">{{ current_page }}</li>
+    </ol>
+  </nav>
+  

@@ -1,10 +1,13 @@
 {% extends "core/base.html" %}
 
+{% block title %}- {{ current_page }}{% endblock title %}
+
 {% block main %}
 {% if request.user.is_authenticated %}
 <main class="col-md-6 ms-sm-auto col-lg-8 px-md-4">
     {% include "core/_messages.html" %}
-  <div class="mt-5">
+    {% include "core/_breadcrumb.html" %}
+  <div class="mt-2">
     <h1>Settings</h1>
     <hr>
     <h3>Select Currency</h3>

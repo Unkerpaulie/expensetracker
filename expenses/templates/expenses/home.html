@@ -1,5 +1,18 @@
 {% extends "core/base.html" %}
-{% block title %}- Expenses{% endblock title %}
+{% block title %}- {{ current_page }}{% endblock title %}
 {% block main %}
-<h1>Expenses and things</h1>
+<main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+    <div class="row">
+        <div class="col-md-9">
+            {% include "core/_breadcrumb.html" %}
+        </div>
+        <div class="col-md-3">
+            <a href="{% url "expenses:add" %}" class="btn btn-outline-secondary mt-2">Add Expense</a>
+        </div>
+    </div>
+    {% include "core/_messages.html" %}
+    <h1>Expenses and things</h1>
+    </main>
+<div class="col-md-3 col-lg-2"></div>
+  
 {% endblock main %}
