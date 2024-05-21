@@ -38,8 +38,13 @@
                     <input type="date" name="expense_date" class="form-control form-control-sm" value="{{ form_data.expense_date }}">
                 </div>
                 
-                <div class="d-grid gap-2">
-                    <button type="submit" id="submit" class="btn btn-primary mt-3">Submit</button>
+                <div class="form-group mt-3 d-flex justify-content-evenly">
+                    {% if current_page == "Add Expense" %}
+                    <button type="submit" id="submit" class="btn btn-primary mt-3">{{ current_page }}</button>
+                    {% else %}
+                    <a href="{% url "expenses:home" %}" class="btn btn-secondary mt-3">Go Back</a>
+                    <button type="submit" id="submit" class="btn btn-primary mt-3">{{ current_page }}</button>
+                    {% endif %}
                 </div>
             </form>
         </div>
@@ -62,7 +67,7 @@
                     <label class="form-label" for="cat">Category</label>
                     <input type="text" name="cat" class="form-control form-control-sm">
                 </div>
-                <div class="form-group mt-3 text-center">
+                <div class="form-group mt-3 d-flex justify-content-evenly">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                     <button type="submit" class="btn btn-primary">Add category</button>
                 </div>

@@ -57,3 +57,44 @@ def add_category(req):
             messages.warning(req, f"No new category was added")
         return redirect("expenses:add")
     
+def edit(req, id):
+    categories = Category.objects.all()
+    expense = Expense.objects.get(pk=id)
+
+    context = {"current_page": "Edit Expense"}
+    context |= {"backlinks": [{"label": "Home", "url": "core:home"}, {"label": "Expenses", "url": "expenses:home"}]}
+    context["categories"] = categories
+    context["form_data"] = {
+        "category": expense.category.name,
+        "description": expense.description,
+        "amount": expense.amount,
+        "expense_date": expense.expense_date.strftime("%Y-%m-%d")
+    }
+
+    if req.method == "POST":
+        # flush messages
+        valid = True
+        form_data = req.POST
+        amount = form_data["amount"]
+        category = form_data["category"]
+        description = form_data["description"]
+        expense_date = form_data["expense_date"]
+        if not amount:
+            valid = False
+            messages.warning(req, "You must enter a numeric amount")
+        if not expense_date:
+            valid = False
+            messages.warning(req, "Please enter a valid date")
+        if not valid:
+            context |= {"form_data": form_data}
+            return render(req, "expenses/add.html", context)
+        else:
+            expense.amount = amount
+            expense.category = Category.objects.get(name=category)
+            expense.description = description
+            expense.expense_date = expense_date
+            expense.save()
+            messages.success(req, "Expense updated")
+            return redirect("expenses:home")
+
+    return render(req, "expenses/add.html", context)

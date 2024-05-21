@@ -74,3 +74,26 @@
   .bd-mode-toggle .dropdown-menu .active .bi {
     display: block !important;
   }
+
+  input[type="date"]::-webkit-calendar-picker-indicator {
+    color: rgba(0, 0, 0, 0);
+    opacity: 1;
+    display: block;
+    background-repeat:  no-repeat;
+    width: 20px;
+    height: 20px;
+    border-width: thin
+}
+
+  input[type="date"]::-webkit-calendar-picker-indicator {
+    position: absolute;
+    left: 4%;
+}
+input::-webkit-datetime-edit-fields-wrapper {
+    position: relative;
+    left: 3%;
+}
+input::-webkit-datetime-edit {
+    position: relative;
+    left: 3%;
+}

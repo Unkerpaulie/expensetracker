@@ -20,6 +20,7 @@
             <th scope="col">Description</th>
             <th scope="col">Amount</th>
             <th scope="col">Date</th>
+            <th scope="col">Actions</th>
           </tr>
         </thead>
         <tbody>
@@ -29,6 +30,14 @@
               <td>{{ expense.description }}</td>
               <td>{{ expense.amount }}</td>
               <td>{{ expense.expense_date }}</td>
+              <td>
+                <a class="btn btn-outline-primary btn-sm" href="{% url "expenses:edit" expense.id %}" title="Edit" id="editBtn{{ expense.id }}">
+                  <svg class="bi"><use xlink:href="#pencil-square"/></svg>
+                </a>
+                <a class="btn btn-outline-danger btn-sm" href="#" title="Delete" role="button" data-id="{{ expense.id }}">
+                  <svg class="bi"><use xlink:href="#trash3"/></svg>
+                </a>
+              </td>
             </tr>
             {% endfor %}
         </tbody>
@@ -38,5 +47,5 @@
     {% endif %}
     </main>
 <div class="col-md-3 col-lg-2"></div>
-  
+
 {% endblock main %}
