@@ -5,8 +5,8 @@
 {% block main %}
 {% if request.user.is_authenticated %}
 <main class="col-md-6 ms-sm-auto col-lg-8 px-md-4">
-    {% include "core/_messages.html" %}
-    {% include "core/_breadcrumb.html" %}
+  {% include "core/_breadcrumb.html" %}
+  {% include "core/_messages.html" %}
   <div class="mt-2">
     <h1>Settings</h1>
     <hr>

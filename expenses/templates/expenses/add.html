@@ -2,8 +2,8 @@
 {% block title %}- {{ current_page }}{% endblock title %}
 {% block main %}
 <main class="col-md-6 ms-sm-auto col-lg-8 px-md-4">
-    {% include "core/_messages.html" %}
     {% include "core/_breadcrumb.html" %}
+    {% include "core/_messages.html" %}
     <div class="card mt-5" data-bs-theme="auto">
         <div class="card-header"></div>
         <div class="card-body">
@@ -11,11 +11,6 @@
             <form action="" method="post">
                 {% csrf_token %}
 
-                <div class="form-group mt-3">
-                    <label class="form-label" for="amount">Amount</label>
-                    <input type="number" name="amount" class="form-control" value="{{ form_data.amount }}" step="0.01" />
-                </div>
-                 
                 <div class="form-group mt-3">
                     <label class="form-label" for="category">Category</label>
                     <div class="input-group">
@@ -34,8 +29,13 @@
                 </div>
                 
                 <div class="form-group mt-3">
+                    <label class="form-label" for="amount">Amount</label>
+                    <input type="number" name="amount" class="form-control" value="{{ form_data.amount }}" step="0.01" />
+                </div>
+                 
+                <div class="form-group mt-3">
                     <label class="form-label" for="date">Expense Date</label>
-                    <input type="date" name="expense_date" class="form-control form-control-sm" value="{{ form_data.expense_date|date:"Y-m-d" }}">
+                    <input type="date" name="expense_date" class="form-control form-control-sm" value="{{ form_data.expense_date }}">
                 </div>
                 
                 <div class="d-grid gap-2">
@@ -62,9 +62,9 @@
                     <label class="form-label" for="cat">Category</label>
                     <input type="text" name="cat" class="form-control form-control-sm">
                 </div>
-                <div class="form-group mt-3">
+                <div class="form-group mt-3 text-center">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary">Save changes</button>
+                    <button type="submit" class="btn btn-primary">Add category</button>
                 </div>
             </form>
         </div>

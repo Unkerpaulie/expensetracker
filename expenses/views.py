@@ -1,11 +1,13 @@
 from django.shortcuts import render, redirect
-from .models import Expense, Category
 from django.contrib import messages
+from .models import Expense, Category
 
 
 def home(req):
     context = {"current_page": "Expenses"}
     context |= {"backlinks": [{"label": "Home", "url": "core:home"}]}
+    expenses = Expense.objects.filter(user=req.user)
+    context["expenses"] = expenses
     return render(req, "expenses/home.html", context)
 
 
@@ -18,7 +20,6 @@ def add(req):
         # flush messages
         valid = True
         form_data = req.POST
-        print(req.POST)
         amount = form_data["amount"]
         category = form_data["category"]
         description = form_data["description"]
@@ -43,7 +44,16 @@ def add(req):
 def add_category(req):
     # does not render template
     if req.method == "POST":
-        if req.POST["cat"]:
-            Category.objects.create(name=req.POST["cat"])
+        new_cat = req.POST["cat"]
+        cat_list = Category.objects.values_list("name", flat=True)
+        # print(cat_list)
+        if new_cat:
+            if new_cat in cat_list:
+                messages.warning(req, f"The category {new_cat} already exists")
+            else:
+                Category.objects.create(name=new_cat)
+                messages.success(req, f"{new_cat} added to Categories")
+        else:
+            messages.warning(req, f"No new category was added")
         return redirect("expenses:add")
     

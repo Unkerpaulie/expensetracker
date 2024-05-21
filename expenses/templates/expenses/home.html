@@ -7,11 +7,35 @@
             {% include "core/_breadcrumb.html" %}
         </div>
         <div class="col-md-3">
-            <a href="{% url "expenses:add" %}" class="btn btn-outline-secondary mt-2">Add Expense</a>
+            <a href="{% url "expenses:add" %}" class="btn btn-outline-primary mt-2">Add Expense</a>
         </div>
     </div>
     {% include "core/_messages.html" %}
-    <h1>Expenses and things</h1>
+    <h1>Expenses</h1>
+    {% if expenses %}
+    <table class="table table-striped table-hover">
+        <thead>
+          <tr>
+            <th scope="col">Category</th>
+            <th scope="col">Description</th>
+            <th scope="col">Amount</th>
+            <th scope="col">Date</th>
+          </tr>
+        </thead>
+        <tbody>
+            {% for expense in expenses %}
+            <tr>
+              <td>{{ expense.category }}</td>
+              <td>{{ expense.description }}</td>
+              <td>{{ expense.amount }}</td>
+              <td>{{ expense.expense_date }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+      </table>
+    {% else %}
+    <p>There are no expenses to show. <a href="{% url "expenses:add" %}">Click here</a> to add your first expense.</p>
+    {% endif %}
     </main>
 <div class="col-md-3 col-lg-2"></div>
   
