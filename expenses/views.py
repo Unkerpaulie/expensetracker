@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
+from django.core.paginator import Paginator
 from .models import Expense, Category
 
 
@@ -8,6 +9,10 @@ def home(req):
     context |= {"backlinks": [{"label": "Home", "url": "core:home"}]}
     expenses = Expense.objects.filter(user=req.user)
     context["expenses"] = expenses
+    paginator = Paginator(expenses, 3)
+    page_num = req.GET.get("page", 1)
+    page_data= paginator.get_page(page_num)
+    context["page_data"] = page_data
     return render(req, "expenses/home.html", context)
 
 
@@ -17,7 +22,6 @@ def add(req):
     context |= {"backlinks": [{"label": "Home", "url": "core:home"}, {"label": "Expenses", "url": "expenses:home"}]}
     context["categories"] = categories
     if req.method == "POST":
-        # flush messages
         valid = True
         form_data = req.POST
         amount = form_data["amount"]
