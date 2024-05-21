@@ -34,7 +34,7 @@
                 <a class="btn btn-outline-primary btn-sm" href="{% url "expenses:edit" expense.id %}" title="Edit" id="editBtn{{ expense.id }}">
                   <svg class="bi"><use xlink:href="#pencil-square"/></svg>
                 </a>
-                <a class="btn btn-outline-danger btn-sm" href="#" title="Delete" role="button" data-id="{{ expense.id }}">
+                <a class="btn btn-outline-danger btn-sm" href="#" title="Delete" role="button"  data-bs-toggle="modal" data-bs-target="#deleteModal{{ expense.id }}">
                   <svg class="bi"><use xlink:href="#trash3"/></svg>
                 </a>
               </td>
@@ -47,5 +47,29 @@
     {% endif %}
     </main>
 <div class="col-md-3 col-lg-2"></div>
+
+<!-- delete expense Modal -->
+{% for expense in expenses %}
+<div class="modal fade mt-5" id="deleteModal{{ expense.id }}" tabindex="-1" aria-labelledby="deleteModal{{ expense.id }}Label" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="deleteModal{{ expense.id }}Label">Confirm Delete</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <strong>Confirm deletion of {{ expense }}?</strong>
+          <form action="{% url "expenses:delete" expense.id %}" method="post">
+              {% csrf_token %}
+              <div class="form-group mt-3 d-flex justify-content-evenly">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                  <button type="submit" class="btn btn-danger">Confirm Delete</button>
+              </div>
+          </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endfor %}
 
 {% endblock main %}

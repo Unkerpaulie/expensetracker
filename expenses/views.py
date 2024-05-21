@@ -98,3 +98,10 @@ def edit(req, id):
             return redirect("expenses:home")
 
     return render(req, "expenses/add.html", context)
+
+def delete(req, id):
+    if req.method == "POST":
+        expense = Expense.objects.get(pk=id)
+        expense.delete()
+        messages.info(req, f"Expense {expense} was deleted")
+        return redirect("expenses:home")
