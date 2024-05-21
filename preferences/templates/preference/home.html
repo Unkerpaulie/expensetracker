@@ -14,7 +14,7 @@
     <form action="" method="post">
     <div class="input-group">
         {% csrf_token %}
-        <select class="form-select" name="curr" aria-label="Example select with button addon">
+        <select class="form-select" name="curr">
           <option {% if not pref %}selected {% endif %}value="">Choose...</option>
           {% for currency in currencies %}
           <option {% if pref and pref.currency == currency.abbr %}selected {% endif %}value="{{ currency.abbr }}">{{ currency.abbr }} - {{ currency.name }}</option>

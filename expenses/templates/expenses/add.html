@@ -1,11 +1,75 @@
 {% extends "core/base.html" %}
 {% block title %}- {{ current_page }}{% endblock title %}
 {% block main %}
-<main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+<main class="col-md-6 ms-sm-auto col-lg-8 px-md-4">
     {% include "core/_messages.html" %}
     {% include "core/_breadcrumb.html" %}
-    <h1>Add Expense</h1>
-    </main>
+    <div class="card mt-5" data-bs-theme="auto">
+        <div class="card-header"></div>
+        <div class="card-body">
+          <h4 class="card-title p-2">Expense details</h4>
+            <form action="" method="post">
+                {% csrf_token %}
+
+                <div class="form-group mt-3">
+                    <label class="form-label" for="amount">Amount</label>
+                    <input type="number" name="amount" class="form-control" value="{{ form_data.amount }}" step="0.01" />
+                </div>
+                 
+                <div class="form-group mt-3">
+                    <label class="form-label" for="category">Category</label>
+                    <div class="input-group">
+                        <select class="form-select" name="category">
+                            {% for category in categories %}
+                            <option value="{{ category.name }}"{% if form_data.category == category.name %} selected{% endif %}>{{ category.name }}</option>
+                            {% endfor %}
+                        </select>
+                        <button class="btn btn-outline-primary" type="button" data-bs-toggle="modal" data-bs-target="#addCategoryModal">Add Category</button>
+                    </div>
+                </div>
+
+                <div class="form-group mt-3">
+                    <label class="form-label" for="description">Description</label>
+                    <input type="text" name="description" class="form-control form-control-sm" value="{{ form_data.description }}">
+                </div>
+                
+                <div class="form-group mt-3">
+                    <label class="form-label" for="date">Expense Date</label>
+                    <input type="date" name="expense_date" class="form-control form-control-sm" value="{{ form_data.expense_date|date:"Y-m-d" }}">
+                </div>
+                
+                <div class="d-grid gap-2">
+                    <button type="submit" id="submit" class="btn btn-primary mt-3">Submit</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</main>
 <div class="col-md-3 col-lg-2"></div>
+
+<!-- Add category Modal -->
+<div class="modal fade mt-5" id="addCategoryModal" tabindex="-1" aria-labelledby="addCategoryModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="addCategoryModalLabel">Add Category</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <form action="{% url "expenses:add_category" %}" method="post">
+                {% csrf_token %}
+                <div class="form-group mt-3">
+                    <label class="form-label" for="cat">Category</label>
+                    <input type="text" name="cat" class="form-control form-control-sm">
+                </div>
+                <div class="form-group mt-3">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Save changes</button>
+                </div>
+            </form>
+        </div>
+      </div>
+    </div>
+  </div>
   
 {% endblock main %}
