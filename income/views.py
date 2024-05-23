@@ -4,19 +4,19 @@ from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.db.models import Q
 from django.http import JsonResponse
-from .models import Expense, Category
+from .models import Income, IncomeCategory
 import json
 
 
 @login_required
 def home(req):
-    context = {"current_page": "Expenses"}
+    context = {"current_page": "Income"}
     context |= {"backlinks": [{"label": "Home", "url": "core:home"}]}
-    context["namespace"] = "expenses"
+    context["namespace"] = "income"
     currency = req.user.preference.currency
     context["currency"] = currency
-    expenses = Expense.objects.filter(user=req.user)
-    paginator = Paginator(expenses, 5)
+    income = Income.objects.filter(user=req.user)
+    paginator = Paginator(income, 5)
     page_num = req.GET.get("page", 1)
     page_data= paginator.get_page(page_num)
     context["page_data"] = page_data
@@ -27,9 +27,9 @@ def search(req):
     if req.method == "POST":
         search = json.loads(req.body).get("search")
         if search:
-            # search through expenses
-            expenses = Expense.objects.filter(user=req.user)
-            exp_results = expenses.filter(
+            # search through income
+            income = Income.objects.filter(user=req.user)
+            exp_results = income.filter(
                 Q(amount__icontains=search) | 
                 Q(category__name__icontains=search) | 
                 Q(description__icontains=search) 
@@ -39,9 +39,9 @@ def search(req):
 
 @login_required
 def add(req):
-    categories = Category.objects.all()
-    context = {"current_page": "Add Expense"}
-    context |= {"backlinks": [{"label": "Home", "url": "core:home"}, {"label": "Expenses", "url": "expenses:home"}]}
+    categories = IncomeCategory.objects.all()
+    context = {"current_page": "Add Income"}
+    context |= {"backlinks": [{"label": "Home", "url": "core:home"}, {"label": "Income", "url": "income:home"}]}
     context["categories"] = categories
     if req.method == "POST":
         valid = True
@@ -60,9 +60,9 @@ def add(req):
             context |= {"form_data": form_data}
             return render(req, "expenses/add.html", context)
         else:
-            messages.success(req, "Expense added")
-            Expense.objects.create(user=req.user, amount=amount, category=Category.objects.get(name=category), description=description, expense_date=expense_date)
-            return redirect("expenses:home")
+            messages.success(req, "Income added")
+            Income.objects.create(user=req.user, amount=amount, category=IncomeCategory.objects.get(name=category), description=description, expense_date=expense_date)
+            return redirect("income:home")
 
     return render(req, "expenses/add.html", context)
 
@@ -72,26 +72,26 @@ def add_category(req):
     # does not render template
     if req.method == "POST":
         new_cat = req.POST["cat"]
-        cat_list = Category.objects.values_list("name", flat=True)
+        cat_list = IncomeCategory.objects.values_list("name", flat=True)
         # print(cat_list)
         if new_cat:
             if new_cat in cat_list:
                 messages.warning(req, f"The category {new_cat} already exists")
             else:
-                Category.objects.create(name=new_cat)
+                IncomeCategory.objects.create(name=new_cat)
                 messages.success(req, f"{new_cat} added to Categories")
         else:
             messages.warning(req, f"No new category was added")
-        return redirect("expenses:add")
+        return redirect("income:add")
    
     
 @login_required
 def edit(req, id):
-    categories = Category.objects.all()
-    expense = Expense.objects.get(pk=id)
+    categories = IncomeCategory.objects.all()
+    expense = Income.objects.get(pk=id)
 
-    context = {"current_page": "Edit Expense"}
-    context |= {"backlinks": [{"label": "Home", "url": "core:home"}, {"label": "Expenses", "url": "expenses:home"}]}
+    context = {"current_page": "Edit Income"}
+    context |= {"backlinks": [{"label": "Home", "url": "core:home"}, {"label": "Income", "url": "income:home"}]}
     context["categories"] = categories
     context["form_data"] = {
         "category": expense.category.name,
@@ -119,12 +119,12 @@ def edit(req, id):
             return render(req, "expenses/add.html", context)
         else:
             expense.amount = amount
-            expense.category = Category.objects.get(name=category)
+            expense.category = IncomeCategory.objects.get(name=category)
             expense.description = description
             expense.expense_date = expense_date
             expense.save()
-            messages.success(req, "Expense updated")
-            return redirect("expenses:home")
+            messages.success(req, "Income updated")
+            return redirect("income:home")
 
     return render(req, "expenses/add.html", context)
 
@@ -132,9 +132,9 @@ def edit(req, id):
 @login_required
 def delete(req, id):
     if req.method == "POST":
-        expense = Expense.objects.get(pk=id)
+        expense = Income.objects.get(pk=id)
         expense.delete()
-        messages.info(req, f"Expense {expense} was deleted")
-        return redirect("expenses:home")
+        messages.info(req, f"Income {expense} was deleted")
+        return redirect("income:home")
 
 

@@ -2,7 +2,7 @@ from django.urls import path
 from django.views.decorators.csrf import csrf_exempt
 from . import views
 
-app_name = "expenses"
+app_name = "income"
 
 urlpatterns = [
     path("", views.home, name="home"),

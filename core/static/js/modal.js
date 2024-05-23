@@ -1,4 +1,5 @@
-  function createEditModal(editBtnId) {
+// this is not being used in the app but I'm  keeping it here in case I need it in the future
+function createEditModal(editBtnId) {
     const editModal = document.getElementById("editModal");
     const expData = document.getElementById("editBtn" + editBtnId);
 
