@@ -12,7 +12,6 @@ import json
 def home(req):
     context = {"current_page": "Expenses"}
     context |= {"backlinks": [{"label": "Home", "url": "core:home"}]}
-    context["namespace"] = "expenses"
     currency = req.user.preference.currency
     context["currency"] = currency
     expenses = Expense.objects.filter(user=req.user)
@@ -49,7 +48,7 @@ def add(req):
         amount = form_data["amount"]
         category = form_data["category"]
         description = form_data["description"]
-        expense_date = form_data["expense_date"]
+        expense_date = form_data["date"]
         if not amount:
             valid = False
             messages.warning(req, "You must enter a numeric amount")

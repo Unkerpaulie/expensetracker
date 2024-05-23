@@ -8,7 +8,7 @@
             {% include "core/_breadcrumb.html" %}
         </div>
         <div class="col-md-3">
-            <a href="{% url namespace|add:":add" %}" class="btn btn-primary mt-2">
+            <a href="{% url request.resolver_match.namespace|add:":add" %}" class="btn btn-primary mt-2">
               <svg class="bi me-2"><use xlink:href="#plus-circle"/></svg>Add {% if current_page == "Expenses" %}Expense{% else %}Income{% endif %} 
             </a>
         </div>
@@ -43,7 +43,7 @@
               <td class="text-end">{{ item.amount }}</td>
               <td>{% if current_page == "Expenses" %}{{ item.expense_date }}{% else %}{{ item.income_date }}{% endif %}</td>
               <td>
-                <a class="btn btn-outline-primary btn-sm" href="{% url namespace|add:":edit" item.id %}" title="Edit" id="editBtn{{ item.id }}">
+                <a class="btn btn-outline-primary btn-sm" href="{% url request.resolver_match.namespace|add:":edit" item.id %}" title="Edit" id="editBtn{{ item.id }}">
                   <svg class="bi"><use xlink:href="#pencil-square"/></svg>
                 </a>
                 <a class="btn btn-outline-danger btn-sm" href="#" title="Delete" role="button"  data-bs-toggle="modal" data-bs-target="#deleteModal{{ item.id }}">
@@ -59,18 +59,18 @@
         <p>Showing page {{ page_data.number }} of {{ page_data.paginator.num_pages }}</p>
         <ul class="pagination">
           {% if page_data.has_previous %}
-          <li class="page-item"><a href="{% url namespace|add:":home" %}" class="page-link">First</a></li>
-          <li class="page-item"><a href="{% url namespace|add:":home" %}?page={{ page_data.previous_page_number }}" class="page-link">{{ page_data.previous_page_number }}</a></li>
+          <li class="page-item"><a href="{% url request.resolver_match.namespace|add:":home" %}" class="page-link">First</a></li>
+          <li class="page-item"><a href="{% url request.resolver_match.namespace|add:":home" %}?page={{ page_data.previous_page_number }}" class="page-link">{{ page_data.previous_page_number }}</a></li>
           {% endif %}
           <li class="page-item active"><span class="page-link">{{ page_data.number }}</span></li>
           {% if page_data.has_next %}
-          <li class="page-item"><a href="{% url namespace|add:":home" %}?page={{ page_data.next_page_number }}" class="page-link">{{ page_data.next_page_number }}</a></li>
-          <li class="page-item"><a href="{% url namespace|add:":home" %}?page={{ page_data.paginator.num_pages }}" class="page-link">Last</a></li>
+          <li class="page-item"><a href="{% url request.resolver_match.namespace|add:":home" %}?page={{ page_data.next_page_number }}" class="page-link">{{ page_data.next_page_number }}</a></li>
+          <li class="page-item"><a href="{% url request.resolver_match.namespace|add:":home" %}?page={{ page_data.paginator.num_pages }}" class="page-link">Last</a></li>
           {% endif %}
         </ul>
       </div>
     {% else %}
-    <p>There are no items to show. <a href="{% url namespace|add:":add" %}">Click here</a> to add your first item.</p>
+    <p>There are no items to show. <a href="{% url request.resolver_match.namespace|add:":add" %}">Click here</a> to add your first item.</p>
     {% endif %}
     </main>
 <div class="col-md-3 col-lg-2"></div>
@@ -86,7 +86,7 @@
       </div>
       <div class="modal-body">
         <strong>Confirm deletion of {{ item }}?</strong>
-          <form action="{% url namespace|add:":delete" item.id %}" method="post">
+          <form action="{% url request.resolver_match.namespace|add:":delete" item.id %}" method="post">
               {% csrf_token %}
               <div class="form-group mt-3 d-flex justify-content-evenly">
                   <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>

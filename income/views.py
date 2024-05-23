@@ -12,7 +12,6 @@ import json
 def home(req):
     context = {"current_page": "Income"}
     context |= {"backlinks": [{"label": "Home", "url": "core:home"}]}
-    context["namespace"] = "income"
     currency = req.user.preference.currency
     context["currency"] = currency
     income = Income.objects.filter(user=req.user)
@@ -49,19 +48,19 @@ def add(req):
         amount = form_data["amount"]
         category = form_data["category"]
         description = form_data["description"]
-        expense_date = form_data["expense_date"]
+        income_date = form_data["date"]
         if not amount:
             valid = False
             messages.warning(req, "You must enter a numeric amount")
-        if not expense_date:
+        if not income_date:
             valid = False
             messages.warning(req, "Please enter a valid date")
         if not valid:
             context |= {"form_data": form_data}
-            return render(req, "expenses/add.html", context)
+            return render(req, "incomes/add.html", context)
         else:
             messages.success(req, "Income added")
-            Income.objects.create(user=req.user, amount=amount, category=IncomeCategory.objects.get(name=category), description=description, expense_date=expense_date)
+            Income.objects.create(user=req.user, amount=amount, category=IncomeCategory.objects.get(name=category), description=description, income_date=income_date)
             return redirect("income:home")
 
     return render(req, "expenses/add.html", context)
@@ -88,16 +87,16 @@ def add_category(req):
 @login_required
 def edit(req, id):
     categories = IncomeCategory.objects.all()
-    expense = Income.objects.get(pk=id)
+    income = Income.objects.get(pk=id)
 
     context = {"current_page": "Edit Income"}
     context |= {"backlinks": [{"label": "Home", "url": "core:home"}, {"label": "Income", "url": "income:home"}]}
     context["categories"] = categories
     context["form_data"] = {
-        "category": expense.category.name,
-        "description": expense.description,
-        "amount": expense.amount,
-        "expense_date": expense.expense_date.strftime("%Y-%m-%d")
+        "category": income.category.name,
+        "description": income.description,
+        "amount": income.amount,
+        "income_date": income.income_date.strftime("%Y-%m-%d")
     }
 
     if req.method == "POST":
@@ -107,22 +106,22 @@ def edit(req, id):
         amount = form_data["amount"]
         category = form_data["category"]
         description = form_data["description"]
-        expense_date = form_data["expense_date"]
+        income_date = form_data["income_date"]
         if not amount:
             valid = False
             messages.warning(req, "You must enter a numeric amount")
-        if not expense_date:
+        if not income_date:
             valid = False
             messages.warning(req, "Please enter a valid date")
         if not valid:
             context |= {"form_data": form_data}
-            return render(req, "expenses/add.html", context)
+            return render(req, "incomes/add.html", context)
         else:
-            expense.amount = amount
-            expense.category = IncomeCategory.objects.get(name=category)
-            expense.description = description
-            expense.expense_date = expense_date
-            expense.save()
+            income.amount = amount
+            income.category = IncomeCategory.objects.get(name=category)
+            income.description = description
+            income.income_date = income_date
+            income.save()
             messages.success(req, "Income updated")
             return redirect("income:home")
 
@@ -132,9 +131,9 @@ def edit(req, id):
 @login_required
 def delete(req, id):
     if req.method == "POST":
-        expense = Income.objects.get(pk=id)
-        expense.delete()
-        messages.info(req, f"Income {expense} was deleted")
+        income = Income.objects.get(pk=id)
+        income.delete()
+        messages.info(req, f"Income {income} was deleted")
         return redirect("income:home")
 
 

@@ -7,19 +7,19 @@
       <div class="offcanvas-body d-md-flex flex-column p-0 pt-lg-3 overflow-y-auto">
         <ul class="nav flex-column">
           <li class="nav-item">
-            <a class="nav-link d-flex align-items-center gap-2 active" aria-current="page" href="{% url "core:home" %}">
+            <a class="nav-link d-flex align-items-center gap-2{% if request.resolver_match.namespace == "core" %} active{% endif %}" aria-current="page" href="{% url "core:home" %}">
               <svg class="bi"><use xlink:href="#house-fill"/></svg>
               Dashboard
             </a>
           </li>
           <li class="nav-item">
-            <a class="nav-link d-flex align-items-center gap-2" href="{% url "expenses:home" %}">
+            <a class="nav-link d-flex align-items-center gap-2{% if request.resolver_match.namespace == "expenses" %} active{% endif %}" href="{% url "expenses:home" %}">
               <svg class="bi"><use xlink:href="#cash-coin"/></svg>
               Expenses
             </a>
           </li>
           <li class="nav-item">
-            <a class="nav-link d-flex align-items-center gap-2" href="{% url "income:home" %}">
+            <a class="nav-link d-flex align-items-center gap-2{% if request.resolver_match.namespace == "income" %} active{% endif %}" href="{% url "income:home" %}">
               <svg class="bi"><use xlink:href="#bank"/></svg>
               Income
             </a>
@@ -87,7 +87,7 @@
 
         <ul class="nav flex-column mb-auto">
           <li class="nav-item">
-            <a class="nav-link d-flex align-items-center gap-2" href="{% url "preference:home" %}">
+            <a class="nav-link d-flex align-items-center gap-2{% if request.resolver_match.namespace == "preference" %} active{% endif %}" href="{% url "preference:home" %}">
               <svg class="bi"><use xlink:href="#gear-wide-connected"/></svg>
               Settings
             </a>

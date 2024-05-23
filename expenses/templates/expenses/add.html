@@ -7,7 +7,7 @@
     <div class="card mt-5" data-bs-theme="auto">
         <div class="card-header"></div>
         <div class="card-body">
-          <h4 class="card-title p-2">Expense details</h4>
+          <h4 class="card-title p-2">{% if current_page == "Expenses" %}Expense{% else %}Income{% endif %} details</h4>
             <form action="" method="post">
                 {% csrf_token %}
 
@@ -34,15 +34,15 @@
                 </div>
                  
                 <div class="form-group mt-3">
-                    <label class="form-label" for="date">Expense Date</label>
-                    <input type="date" name="expense_date" class="form-control form-control-sm" value="{{ form_data.expense_date }}">
+                    <label class="form-label" for="date">Date</label>
+                    <input type="date" name="date" class="form-control form-control-sm" value="{{ form_data.date }}">
                 </div>
                 
                 <div class="form-group mt-3 d-flex justify-content-evenly">
                     {% if current_page == "Add Expense" %}
                     <button type="submit" id="submit" class="btn btn-primary mt-3">{{ current_page }}</button>
                     {% else %}
-                    <a href="{% url "expenses:home" %}" class="btn btn-secondary mt-3">Go Back</a>
+                    <a href="{% url request.resolver_match.namespace|add:":home" %}" class="btn btn-secondary mt-3">Go Back</a>
                     <button type="submit" id="submit" class="btn btn-primary mt-3">{{ current_page }}</button>
                     {% endif %}
                 </div>
@@ -61,7 +61,7 @@
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-            <form action="{% url "expenses:add_category" %}" method="post">
+            <form action="{% url request.resolver_match.namespace|add:":add_category" %}" method="post">
                 {% csrf_token %}
                 <div class="form-group mt-3">
                     <label class="form-label" for="cat">Category</label>
