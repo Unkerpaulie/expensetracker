@@ -3,11 +3,11 @@ from django.contrib.auth.models import User
 from django.utils.timezone import now
 
 
-class IncomeCategory(models.Model):
+class Source(models.Model):
     name = models.CharField(max_length=50, unique=True)
 
     class Meta:
-        verbose_name_plural = "Income Categories"
+        db_table = "income_source"
         ordering = ["name"]
 
     def __str__(self):
@@ -19,9 +19,10 @@ class Income(models.Model):
     amount = models.FloatField()
     income_date = models.DateField(default=now)
     description = models.CharField(max_length=200, blank=True, null=True)
-    category = models.ForeignKey(IncomeCategory, on_delete=models.CASCADE)
+    source = models.ForeignKey(Source, on_delete=models.CASCADE)
 
     class Meta:
+        verbose_name_plural = "Income"
         ordering = ["-income_date"] # the - in front the field name denotes descending order
 
     def __str__(self):

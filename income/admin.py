@@ -1,6 +1,6 @@
 from django.contrib import admin
-from .models import Income, IncomeCategory
+from .models import Income, Source
 
 
 admin.site.register(Income)
-admin.site.register(IncomeCategory)
+admin.site.register(Source)

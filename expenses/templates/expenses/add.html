@@ -7,19 +7,19 @@
     <div class="card mt-5" data-bs-theme="auto">
         <div class="card-header"></div>
         <div class="card-body">
-          <h4 class="card-title p-2">{% if current_page == "Expenses" %}Expense{% else %}Income{% endif %} details</h4>
+          <h4 class="card-title p-2">{% if current_page == "Add Expense" %}Expense{% else %}Income{% endif %} details</h4>
             <form action="" method="post">
                 {% csrf_token %}
 
                 <div class="form-group mt-3">
-                    <label class="form-label" for="category">Category</label>
+                    <label class="form-label" for="category">{% if current_page == "Add Expense" %}Category{% else %}Source{% endif %}</label>
                     <div class="input-group">
                         <select class="form-select" name="category">
                             {% for category in categories %}
                             <option value="{{ category.name }}"{% if form_data.category == category.name %} selected{% endif %}>{{ category.name }}</option>
                             {% endfor %}
                         </select>
-                        <button class="btn btn-outline-primary" type="button" data-bs-toggle="modal" data-bs-target="#addCategoryModal">Add Category</button>
+                        <button class="btn btn-outline-primary" type="button" data-bs-toggle="modal" data-bs-target="#addCategoryModal">Add {% if current_page == "Add Expense" %}Category{% else %}Source{% endif %}</button>
                     </div>
                 </div>
 
@@ -28,14 +28,16 @@
                     <input type="text" name="description" class="form-control form-control-sm" value="{{ form_data.description }}">
                 </div>
                 
-                <div class="form-group mt-3">
-                    <label class="form-label" for="amount">Amount</label>
-                    <input type="number" name="amount" class="form-control" value="{{ form_data.amount }}" step="0.01" />
-                </div>
-                 
-                <div class="form-group mt-3">
-                    <label class="form-label" for="date">Date</label>
-                    <input type="date" name="date" class="form-control form-control-sm" value="{{ form_data.date }}">
+                <div class="row">
+                    <div class="form-group mt-3 col-md-9">
+                        <label class="form-label" for="amount">Amount</label>
+                        <input type="number" name="amount" class="form-control" value="{{ form_data.amount }}" step="0.01" />
+                    </div>
+                    
+                    <div class="form-group mt-3 col-md-3">
+                        <label class="form-label" for="date">Date</label>
+                        <input type="date" name="date" class="form-control form-control-sm" value="{{ form_data.date }}">
+                    </div>
                 </div>
                 
                 <div class="form-group mt-3 d-flex justify-content-evenly">
@@ -57,19 +59,19 @@
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
-          <h1 class="modal-title fs-5" id="addCategoryModalLabel">Add Category</h1>
+          <h1 class="modal-title fs-5" id="addCategoryModalLabel">Add {% if current_page == "Add Expense" %}Category{% else %}Source{% endif %}</h1>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
             <form action="{% url request.resolver_match.namespace|add:":add_category" %}" method="post">
                 {% csrf_token %}
                 <div class="form-group mt-3">
-                    <label class="form-label" for="cat">Category</label>
+                    <label class="form-label" for="cat">{% if current_page == "Add Expense" %}Category{% else %}Source{% endif %}</label>
                     <input type="text" name="cat" class="form-control form-control-sm">
                 </div>
                 <div class="form-group mt-3 d-flex justify-content-evenly">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary">Add category</button>
+                    <button type="submit" class="btn btn-primary">Add {% if current_page == "Add Expense" %}Category{% else %}Source{% endif %}</button>
                 </div>
             </form>
         </div>

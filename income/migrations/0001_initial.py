@@ -16,7 +16,7 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name='IncomeCategory',
+            name='Source',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('name', models.CharField(max_length=50, unique=True)),
@@ -34,7 +34,7 @@ class Migration(migrations.Migration):
                 ('income_date', models.DateField(default=django.utils.timezone.now)),
                 ('description', models.CharField(blank=True, max_length=200, null=True)),
                 ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
-                ('category', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='income.incomecategory')),
+                ('category', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='income.Source')),
             ],
             options={
                 'ordering': ['-income_date'],

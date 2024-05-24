@@ -4,7 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.db.models import Q
 from django.http import JsonResponse
-from .models import Income, IncomeCategory
+from .models import Income, Source
 import json
 
 
@@ -38,7 +38,7 @@ def search(req):
 
 @login_required
 def add(req):
-    categories = IncomeCategory.objects.all()
+    categories = Source.objects.all()
     context = {"current_page": "Add Income"}
     context |= {"backlinks": [{"label": "Home", "url": "core:home"}, {"label": "Income", "url": "income:home"}]}
     context["categories"] = categories
@@ -60,7 +60,7 @@ def add(req):
             return render(req, "incomes/add.html", context)
         else:
             messages.success(req, "Income added")
-            Income.objects.create(user=req.user, amount=amount, category=IncomeCategory.objects.get(name=category), description=description, income_date=income_date)
+            Income.objects.create(user=req.user, amount=amount, source=Source.objects.get(name=category), description=description, income_date=income_date)
             return redirect("income:home")
 
     return render(req, "expenses/add.html", context)
@@ -71,22 +71,22 @@ def add_category(req):
     # does not render template
     if req.method == "POST":
         new_cat = req.POST["cat"]
-        cat_list = IncomeCategory.objects.values_list("name", flat=True)
+        cat_list = Source.objects.values_list("name", flat=True)
         # print(cat_list)
         if new_cat:
             if new_cat in cat_list:
                 messages.warning(req, f"The category {new_cat} already exists")
             else:
-                IncomeCategory.objects.create(name=new_cat)
-                messages.success(req, f"{new_cat} added to Categories")
+                Source.objects.create(name=new_cat)
+                messages.success(req, f"{new_cat} added to income sources")
         else:
-            messages.warning(req, f"No new category was added")
+            messages.warning(req, f"No new source was added")
         return redirect("income:add")
    
     
 @login_required
 def edit(req, id):
-    categories = IncomeCategory.objects.all()
+    categories = Source.objects.all()
     income = Income.objects.get(pk=id)
 
     context = {"current_page": "Edit Income"}
@@ -118,7 +118,7 @@ def edit(req, id):
             return render(req, "incomes/add.html", context)
         else:
             income.amount = amount
-            income.category = IncomeCategory.objects.get(name=category)
+            income.category = Source.objects.get(name=category)
             income.description = description
             income.income_date = income_date
             income.save()
