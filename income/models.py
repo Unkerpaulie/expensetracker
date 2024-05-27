@@ -15,16 +15,16 @@ class Source(models.Model):
 
 
 class Income(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, related_name="incomes", on_delete=models.CASCADE)
     amount = models.FloatField()
     income_date = models.DateField(default=now)
     description = models.CharField(max_length=200, blank=True, null=True)
-    source = models.ForeignKey(Source, on_delete=models.CASCADE)
+    source = models.ForeignKey(Source, related_name="incomes", on_delete=models.CASCADE)
 
     class Meta:
         verbose_name_plural = "Income"
         ordering = ["-income_date"] # the - in front the field name denotes descending order
 
     def __str__(self):
-        return f"{self.amount} earned from {self.category}"
+        return f"{self.amount} earned from {self.source}"
     
