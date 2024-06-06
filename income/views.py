@@ -57,7 +57,7 @@ def add(req):
             messages.warning(req, "Please enter a valid date")
         if not valid:
             context |= {"form_data": form_data}
-            return render(req, "incomes/add.html", context)
+            return render(req, "expenses/add.html", context)
         else:
             messages.success(req, "Income added")
             Income.objects.create(user=req.user, amount=amount, source=Source.objects.get(name=category), description=description, income_date=income_date)
@@ -93,7 +93,7 @@ def edit(req, id):
     context |= {"backlinks": [{"label": "Home", "url": "core:home"}, {"label": "Income", "url": "income:home"}]}
     context["categories"] = categories
     context["form_data"] = {
-        "category": income.category.name,
+        "category": income.source.name,
         "description": income.description,
         "amount": income.amount,
         "income_date": income.income_date.strftime("%Y-%m-%d")

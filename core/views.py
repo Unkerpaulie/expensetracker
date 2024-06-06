@@ -8,8 +8,8 @@ import pandas as pd
 
 
 # utility functions
-def expense_data():
-    exp = pd.DataFrame(list(Expense.objects.all().values()))
+def expense_data(u):
+    exp = pd.DataFrame(list(Expense.objects.filter(user=u).values()))
     cat = pd.DataFrame(list(Category.objects.all().values()))
     exp["expense_date"] = pd.to_datetime(exp['expense_date'])
     exp_data = exp.merge(cat, left_on="category_id", right_on="id", suffixes=('', '_y'))
@@ -17,9 +17,10 @@ def expense_data():
     exp_data["month"] = exp_data["expense_date"].dt.month
     exp_data["year"] = exp_data["expense_date"].dt.year
     return exp_data
-    
-def income_data():
-    inc = pd.DataFrame(list(Income.objects.all().values()))
+
+
+def income_data(u):
+    inc = pd.DataFrame(list(Income.objects.filter(user=u).values()))
     src = pd.DataFrame(list(Source.objects.all().values()))
     inc["income_date"] = pd.to_datetime(inc['income_date'])
     inc_data = inc.merge(src, left_on="source_id", right_on="id", suffixes=('', '_y'))
@@ -32,23 +33,23 @@ def income_data():
 # route functions
 def home(req):
     context = {"current_page": "Home"}
-    # get months for chart filtering
-    exp = expense_data()
-    inc = income_data()
-    months = list(set([m for m in exp["month"]] + [m for m in inc["month"]]))
-    months.sort()
-    month_select = [{"num": m, "month_name": calendar.month_name[m]} for m in months]
-    context |= {"months": month_select}
+    if req.user.is_authenticated:
+        # get months for chart filtering
+        exp = expense_data(req.user)
+        inc = income_data(req.user)
+        months = list(set([m for m in exp["month"]] + [m for m in inc["month"]]))
+        months.sort()
+        month_select = [{"num": m, "month_name": calendar.month_name[m]} for m in months]
+        context |= {"months": month_select}
     return render(req, "core/home.html", context)
 
 
 def month_charts(req):
     context = {}
-    exp = expense_data()
+    exp = expense_data(req.user)
     exp = exp[exp["user_id"] == req.user.id]
-    inc = income_data()
+    inc = income_data(req.user)
     inc = inc[inc["user_id"] == req.user.id]
-    print("posty:", req.POST)
 
     if req.method == "POST" and int(req.POST.get("month", 0)[0]) != 0:
         # filter if month
@@ -105,9 +106,9 @@ def check(req):
     res += "".join([f"<li>{f.name}: {f.expenses.count()}</li>" for f in Category.objects.all()])
     res += "</ul>"
     res += f"<h3>Expenses{req.user.preference.currency}</h3>"
-    res += expense_data().to_html()
-    res += income_data().to_html()
-    inc = income_data()
+    res += expense_data(req.user).to_html()
+    res += income_data(req.user).to_html()
+    inc = income_data(req.user)
     inc= inc[inc["month"] == 5]
     res += inc.to_html()
     return HttpResponse(res)

@@ -10,6 +10,7 @@ function showchart(data, ctx) {
       }]
     },
     options: {
+      indexAxis: "y",
       scales: {
         y: {
           beginAtZero: true
@@ -49,9 +50,9 @@ async function buildchart(endpoint, chart_cont, key, m=0) {
     // headers: {"Content-Type": "application/json"},
     body: postbody
   });
-  console.log("month", m);
+  // console.log("month", m);
   const data = await response.json();
-  console.log(key, data[key])
+  // console.log(key, data[key])
   await showchart(data[key], cv);
 }
 
