@@ -33,6 +33,7 @@ def income_data(u):
 # route functions
 def home(req):
     context = {"current_page": "Home"}
+    print(req.user, req.user.is_authenticated)
     if req.user.is_authenticated:
         # get months for chart filtering
         exp = expense_data(req.user)
@@ -42,7 +43,6 @@ def home(req):
         month_select = [{"num": m, "month_name": calendar.month_name[m]} for m in months]
         context |= {"months": month_select}
     return render(req, "core/home.html", context)
-
 
 def month_charts(req):
     context = {}
@@ -95,6 +95,11 @@ def search(req):
             )
             return JsonResponse(list(exp_results.values()), safe=False)
         
+def maybe(req):
+    res = f"<p>{req.user}</p>"
+    res += f"<p>{req.user.is_authenticated}</p>"
+    return HttpResponse(res)
+
 
 def check(req):
     res = f"<h3>{Source.objects.model._meta.db_table}</h3>"

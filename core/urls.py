@@ -7,6 +7,7 @@ app_name = "core"
 urlpatterns = [
     path("", views.home, name="home"),
     path("check/", views.check, name="check"),
+    path("maybe/", views.maybe, name="maybe"),
     path("month_charts/", csrf_exempt(views.month_charts), name="month_charts"),
     # path("inc_chart/", csrf_exempt(views.inc_chart), name="inc_chart"),
 ]
