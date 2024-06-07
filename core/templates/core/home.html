@@ -8,6 +8,7 @@
   <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
     <h1 class="h2">Dashboard</h1>
     <div class="btn-toolbar mb-2 mb-md-0">
+      {% if not nodata %}
         <div class="form-group mt-3">
             <div class="input-group">
                 <select class="form-select" name="month" id="month">
@@ -18,17 +19,18 @@
                 </select>
                 <button class="btn btn-outline-primary" type="button" id="submitMonth">Select Month</button>
             </div>
-        </div>
+          </div>
+      {% endif %}
     </div>
   </div>
   <div class="row">
     <div class="col-md-6">
       <h3><a href="{% url "expenses:home" %}" class="link-underline link-underline-opacity-0">Expenses</a></h3>
-      <div id="exp_cont"></canvas></div>
+      <div id="exp_cont"></div>
     </div>
     <div class="col-md-6">
       <h3><a href="{% url "income:home" %}" class="link-underline link-underline-opacity-0">Income</a></h3>
-      <div id="inc_cont"></canvas></div>
+      <div id="inc_cont"></div>
     </div>
   </div>
   

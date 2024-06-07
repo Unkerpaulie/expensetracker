@@ -8,9 +8,11 @@
     <div class="row">
       <div class="col-md-9"><h1>{{ current_page }}</h1></div>
       <div class="col-md-3 text-end">
+        {% if not nopref %}
         <a href="{% url request.resolver_match.namespace|add:":add" %}" class="btn btn-primary mt-2">
           <svg class="bi me-2"><use xlink:href="#plus-circle"/></svg>Add {% if current_page == "Expenses" %}Expense{% else %}Income{% endif %} 
         </a>
+        {% endif %}
         
         {% comment %} <div class="form-group mt-2">
           <input type="text" class="form-control" placeholder="Search Expenses" name="exp_search" id="exp-search">
@@ -63,9 +65,12 @@
           {% endif %}
         </ul>
       </div>
+    {% elif nopref %}
+    <p class="my-4">You must select a currency in <a href="{% url "preference:home" %}">Settings</a> before entering data.</p>
     {% else %}
-    <p>There are no items to show. <a href="{% url request.resolver_match.namespace|add:":add" %}">Click here</a> to add your first item.</p>
+    <p class="my-4">There are no items to show. <a href="{% url request.resolver_match.namespace|add:":add" %}">Click here</a> to add your first item.</p>
     {% endif %}
+
     </main>
 <div class="col-md-3 col-lg-2"></div>
 

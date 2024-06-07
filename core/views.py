@@ -10,74 +10,85 @@ import pandas as pd
 # utility functions
 def expense_data(u):
     exp = pd.DataFrame(list(Expense.objects.filter(user=u).values()))
-    cat = pd.DataFrame(list(Category.objects.all().values()))
-    exp["expense_date"] = pd.to_datetime(exp['expense_date'])
-    exp_data = exp.merge(cat, left_on="category_id", right_on="id", suffixes=('', '_y'))
-    exp_data = exp_data.drop('id_y', axis=1)
-    exp_data["month"] = exp_data["expense_date"].dt.month
-    exp_data["year"] = exp_data["expense_date"].dt.year
-    return exp_data
+    if not exp.empty:
+        cat = pd.DataFrame(list(Category.objects.all().values()))
+        exp["expense_date"] = pd.to_datetime(exp['expense_date'])
+        exp_data = exp.merge(cat, left_on="category_id", right_on="id", suffixes=('', '_y'))
+        exp_data = exp_data.drop('id_y', axis=1)
+        exp_data["month"] = exp_data["expense_date"].dt.month
+        exp_data["year"] = exp_data["expense_date"].dt.year
+        return exp_data
+    return None
 
 
 def income_data(u):
     inc = pd.DataFrame(list(Income.objects.filter(user=u).values()))
-    src = pd.DataFrame(list(Source.objects.all().values()))
-    inc["income_date"] = pd.to_datetime(inc['income_date'])
-    inc_data = inc.merge(src, left_on="source_id", right_on="id", suffixes=('', '_y'))
-    inc_data = inc_data.drop('id_y', axis=1)
-    inc_data["month"] = inc_data["income_date"].dt.month
-    inc_data["year"] = inc_data["income_date"].dt.year
-    return inc_data
+    if not inc.empty:
+        src = pd.DataFrame(list(Source.objects.all().values()))
+        inc["income_date"] = pd.to_datetime(inc['income_date'])
+        inc_data = inc.merge(src, left_on="source_id", right_on="id", suffixes=('', '_y'))
+        inc_data = inc_data.drop('id_y', axis=1)
+        inc_data["month"] = inc_data["income_date"].dt.month
+        inc_data["year"] = inc_data["income_date"].dt.year
+        return inc_data
+    return None
     
 
 # route functions
 def home(req):
     context = {"current_page": "Home"}
-    print(req.user, req.user.is_authenticated)
     if req.user.is_authenticated:
         # get months for chart filtering
         exp = expense_data(req.user)
         inc = income_data(req.user)
-        months = list(set([m for m in exp["month"]] + [m for m in inc["month"]]))
-        months.sort()
-        month_select = [{"num": m, "month_name": calendar.month_name[m]} for m in months]
-        context |= {"months": month_select}
+        if exp or inc:
+            months = list(set([m for m in exp["month"]] + [m for m in inc["month"]]))
+            months.sort()
+            month_select = [{"num": m, "month_name": calendar.month_name[m]} for m in months]
+            context |= {"months": month_select}
+        else:
+            context |= {"nodata": True}
     return render(req, "core/home.html", context)
+
 
 def month_charts(req):
     context = {}
+
     exp = expense_data(req.user)
-    exp = exp[exp["user_id"] == req.user.id]
     inc = income_data(req.user)
-    inc = inc[inc["user_id"] == req.user.id]
+    if exp:
+        exp = exp[exp["user_id"] == req.user.id]
+        if req.method == "POST" and int(req.POST.get("month", 0)[0]) != 0:
+            # filter if month
+            m = int(req.POST.get("month", 0)[0])
+            exp = exp[exp["month"] == m]
+        exp = exp[["name", "amount"]]
+        exp = exp.groupby(["name"]).sum().sort_values(by="amount", ascending=False)
+        exp_chart = {}
+        exp_chart["labels"] = exp.index.tolist()
+        exp_chart["values"] = exp["amount"].tolist()
+        exp_chart["total"] = exp["amount"].sum()
+        exp_chart["currency"] = req.user.preference.currency
+        context["exp_chart"] = exp_chart
+    else:
+        context["exp_chart"] = False
 
-    if req.method == "POST" and int(req.POST.get("month", 0)[0]) != 0:
-        # filter if month
-        m = int(req.POST.get("month", 0)[0])
-        print("m", m)
-        exp = exp[exp["month"] == m]
-        inc = inc[inc["month"] == m]
-
-    # get data for charts 
-    exp = exp[["name", "amount"]]
-    exp = exp.groupby(["name"]).sum().sort_values(by="amount", ascending=False)
-    exp_chart = {}
-    exp_chart["labels"] = exp.index.tolist()
-    exp_chart["values"] = exp["amount"].tolist()
-    exp_chart["total"] = exp["amount"].sum()
-    exp_chart["currency"] = req.user.preference.currency
-
-    inc = inc[["name", "amount"]]
-    inc = inc.groupby(["name"]).sum().sort_values(by="amount", ascending=False)
-    inc_chart = {}
-    inc_chart["labels"] = inc.index.tolist()
-    inc_chart["values"] = inc["amount"].tolist()
-    inc_chart["total"] = inc["amount"].sum()
-    inc_chart["currency"] = req.user.preference.currency
-
-    context["exp_chart"] = exp_chart
-    context["inc_chart"] = inc_chart
-
+    if inc:
+        inc = inc[inc["user_id"] == req.user.id]
+        if req.method == "POST" and int(req.POST.get("month", 0)[0]) != 0:
+            # filter if month
+            m = int(req.POST.get("month", 0)[0])
+            inc = inc[inc["month"] == m]
+        inc = inc[["name", "amount"]]
+        inc = inc.groupby(["name"]).sum().sort_values(by="amount", ascending=False)
+        inc_chart = {}
+        inc_chart["labels"] = inc.index.tolist()
+        inc_chart["values"] = inc["amount"].tolist()
+        inc_chart["total"] = inc["amount"].sum()
+        inc_chart["currency"] = req.user.preference.currency
+        context["inc_chart"] = inc_chart
+    else:
+        context["inc_chart"] = False
 
     return JsonResponse(context)
 

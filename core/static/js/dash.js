@@ -35,11 +35,6 @@ async function buildchart(endpoint, chart_cont, key, m=0) {
   while (chart_cont.firstChild) {
     chart_cont.removeChild(chart_cont.firstChild);
   }
-  const cv = document.createElement("canvas");
-  cv.height = 240;
-  cv.classList.add("my-4");
-  cv.classList.add("w-100");
-  chart_cont.appendChild(cv);
 
   let postbody = new URLSearchParams();
   postbody.append("month", m);
@@ -53,7 +48,16 @@ async function buildchart(endpoint, chart_cont, key, m=0) {
   // console.log("month", m);
   const data = await response.json();
   // console.log(key, data[key])
-  await showchart(data[key], cv);
+  if (data[key]) {
+    const cv = document.createElement("canvas");
+    cv.height = 240;
+    cv.classList.add("my-4");
+    cv.classList.add("w-100");
+    chart_cont.appendChild(cv);
+    await showchart(data[key], cv);
+  } else {
+    chart_cont.innerHTML = "<h4 class=\"mt-4 text-muted\">No data found</h4>"
+  }
 }
 
 const mnthBtn = document.getElementById("submitMonth");

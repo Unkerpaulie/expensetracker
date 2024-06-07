@@ -12,13 +12,16 @@ import json
 def home(req):
     context = {"current_page": "Income"}
     context |= {"backlinks": [{"label": "Home", "url": "core:home"}]}
-    currency = req.user.preference.currency
-    context["currency"] = currency
-    income = Income.objects.filter(user=req.user)
-    paginator = Paginator(income, 5)
-    page_num = req.GET.get("page", 1)
-    page_data= paginator.get_page(page_num)
-    context["page_data"] = page_data
+    if hasattr(req.user, "preference"):
+        currency = req.user.preference.currency
+        context["currency"] = currency
+        income = Income.objects.filter(user=req.user)
+        paginator = Paginator(income, 5)
+        page_num = req.GET.get("page", 1)
+        page_data= paginator.get_page(page_num)
+        context["page_data"] = page_data
+    else:
+        context["nopref"] = True
     return render(req, "expenses/home.html", context)
 
 
