@@ -18,7 +18,7 @@ def expense_data(u):
         exp_data["month"] = exp_data["expense_date"].dt.month
         exp_data["year"] = exp_data["expense_date"].dt.year
         return exp_data
-    return None
+    return exp
 
 
 def income_data(u):
@@ -31,7 +31,7 @@ def income_data(u):
         inc_data["month"] = inc_data["income_date"].dt.month
         inc_data["year"] = inc_data["income_date"].dt.year
         return inc_data
-    return None
+    return inc
     
 
 # route functions
