@@ -41,7 +41,7 @@ def home(req):
         # get months for chart filtering
         exp = expense_data(req.user)
         inc = income_data(req.user)
-        if exp or inc:
+        if not exp.empty or not inc.empty:
             months = list(set([m for m in exp["month"]] + [m for m in inc["month"]]))
             months.sort()
             month_select = [{"num": m, "month_name": calendar.month_name[m]} for m in months]
@@ -56,7 +56,7 @@ def month_charts(req):
 
     exp = expense_data(req.user)
     inc = income_data(req.user)
-    if exp:
+    if not exp.empty:
         exp = exp[exp["user_id"] == req.user.id]
         if req.method == "POST" and int(req.POST.get("month", 0)[0]) != 0:
             # filter if month
@@ -73,7 +73,7 @@ def month_charts(req):
     else:
         context["exp_chart"] = False
 
-    if inc:
+    if not inc.empty:
         inc = inc[inc["user_id"] == req.user.id]
         if req.method == "POST" and int(req.POST.get("month", 0)[0]) != 0:
             # filter if month
