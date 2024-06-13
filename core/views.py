@@ -40,9 +40,11 @@ def home(req):
     if req.user.is_authenticated:
         # get months for chart filtering
         exp = expense_data(req.user)
+        emonths = [m for m in exp["month"]] if not exp.empty else []
         inc = income_data(req.user)
-        if not exp.empty or not inc.empty:
-            months = list(set([m for m in exp["month"]] + [m for m in inc["month"]]))
+        imonths = [m for m in inc["month"]] if not inc.empty else []
+        months = list(set(emonths + imonths))
+        if months:
             months.sort()
             month_select = [{"num": m, "month_name": calendar.month_name[m]} for m in months]
             context |= {"months": month_select}

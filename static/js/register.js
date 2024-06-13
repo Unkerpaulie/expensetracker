@@ -7,7 +7,7 @@ const submitBtn = document.getElementById("submit");
 var valid_fields = new Set();
 
 function allowSubmit() {
-    console.log("valid fields:", Array.from(valid_fields).join(', '));
+    // console.log("valid fields:", Array.from(valid_fields).join(', '));
     if (valid_fields.size >= 4) {
         submitBtn.removeAttribute("disabled");
     } else {
@@ -78,7 +78,6 @@ emailField.addEventListener("keyup", (e) => {
                 emailFeedback.style.display = "block";
                 emailFeedback.innerText = data.email_error;
                 valid_fields.delete("email");
-                console.log("bad email");
             }
         })).then((whatever) => allowSubmit());
     } 
