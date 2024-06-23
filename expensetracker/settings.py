@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     "income",
     "authentication",
     "preferences",
+    "reports",
 ]
 
 MIDDLEWARE = [
