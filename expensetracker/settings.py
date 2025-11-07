@@ -134,3 +134,5 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 LOGIN_URL='/auth/login'
 # LOGIN_REDIRECT_URL=''
+
+CSRF_TRUSTED_ORIGINS = ['https://expensetracker-production-b92e.up.railway.app']
