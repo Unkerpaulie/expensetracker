@@ -10,24 +10,37 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# Environment detection
+# Set ENVIRONMENT variable to 'local', 'railway', or 'pythonanywhere'
+# Defaults to 'local' if not set
+ENVIRONMENT = os.environ.get('ENVIRONMENT', 'local')
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-4wp46j4_r5(4v_3&jp2m-68j$p9ny)qylj%_(&n^k^q9xz&jn%'
+SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-4wp46j4_r5(4v_3&jp2m-68j$p9ny)qylj%_(&n^k^q9xz&jn%')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get('DEBUG', 'True') == 'True'
 
-# ALLOWED_HOSTS = ["unkerpaulie.pythonanywhere.com", "localhost", "127.0.0.1"]
-
-ALLOWED_HOSTS = ["*"]
+# Environment-specific settings
+if ENVIRONMENT == 'local':
+    ALLOWED_HOSTS = ['localhost', '127.0.0.1']
+elif ENVIRONMENT == 'railway':
+    ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '').split(',')
+    if not ALLOWED_HOSTS or ALLOWED_HOSTS == ['']:
+        ALLOWED_HOSTS = ['*']  # Fallback for Railway
+elif ENVIRONMENT == 'pythonanywhere':
+    ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'unkerpaulie.pythonanywhere.com').split(',')
+else:
+    ALLOWED_HOSTS = ['*']
 
 # Application definition
 INSTALLED_APPS = [
@@ -48,6 +61,13 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+]
+
+# Add WhiteNoise for Railway (static file serving)
+if ENVIRONMENT == 'railway':
+    MIDDLEWARE.append('whitenoise.middleware.WhiteNoiseMiddleware')
+
+MIDDLEWARE += [
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -80,12 +100,51 @@ WSGI_APPLICATION = 'expensetracker.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+if ENVIRONMENT == 'local':
+    # Local development uses SQLite
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
     }
-}
+elif ENVIRONMENT == 'railway':
+    # Railway uses PostgreSQL via DATABASE_URL
+    import dj_database_url
+    DATABASES = {
+        'default': dj_database_url.config(
+            default=os.environ.get('DATABASE_URL'),
+            conn_max_age=600,
+            conn_health_checks=True,
+        )
+    }
+elif ENVIRONMENT == 'pythonanywhere':
+    # PythonAnywhere can use either SQLite or MySQL
+    # Check if DATABASE_URL is provided, otherwise use SQLite
+    database_url = os.environ.get('DATABASE_URL')
+    if database_url:
+        import dj_database_url
+        DATABASES = {
+            'default': dj_database_url.config(
+                default=database_url,
+                conn_max_age=600,
+            )
+        }
+    else:
+        DATABASES = {
+            'default': {
+                'ENGINE': 'django.db.backends.sqlite3',
+                'NAME': BASE_DIR / 'db.sqlite3',
+            }
+        }
+else:
+    # Fallback to SQLite
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
 
 
 # Password validation
@@ -122,17 +181,40 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
-
 STATIC_URL = 'static/'
 
-# STATIC_ROOT = BASE_DIR / "static"
+if ENVIRONMENT == 'local':
+    # Local development doesn't need STATIC_ROOT
+    pass
+elif ENVIRONMENT == 'railway':
+    # Railway needs STATIC_ROOT for WhiteNoise
+    STATIC_ROOT = BASE_DIR / 'staticfiles'
+    # WhiteNoise configuration for Railway
+    STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+elif ENVIRONMENT == 'pythonanywhere':
+    # PythonAnywhere needs STATIC_ROOT
+    STATIC_ROOT = BASE_DIR / 'static'
+else:
+    STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-LOGIN_URL='/auth/login'
-# LOGIN_REDIRECT_URL=''
+LOGIN_URL = '/auth/login'
+# LOGIN_REDIRECT_URL = ''
 
-CSRF_TRUSTED_ORIGINS = ['https://expensetracker-production-b92e.up.railway.app']
+# CSRF Trusted Origins - environment specific
+if ENVIRONMENT == 'railway':
+    railway_url = os.environ.get('RAILWAY_PUBLIC_DOMAIN', '')
+    if railway_url:
+        CSRF_TRUSTED_ORIGINS = [f'https://{railway_url}']
+    else:
+        # Fallback to your specific Railway domain
+        CSRF_TRUSTED_ORIGINS = ['https://expensetracker-production-b92e.up.railway.app']
+elif ENVIRONMENT == 'pythonanywhere':
+    pythonanywhere_url = os.environ.get('PYTHONANYWHERE_DOMAIN', 'unkerpaulie.pythonanywhere.com')
+    CSRF_TRUSTED_ORIGINS = [f'https://{pythonanywhere_url}']
+else:
+    CSRF_TRUSTED_ORIGINS = []
