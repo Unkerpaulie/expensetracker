@@ -1,0 +1,21 @@
+name: Sync to business repo
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout personal repo
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Push to business repo
+        run: |
+          git config user.name "GitHub Action"
+          git config user.email "action@github.com"
+          git remote add business https://x-access-token:${{ secrets.BUSINESS_REPO_TOKEN }}@github.com/islan-dev/expensetracker.git
+          git push --mirror business
