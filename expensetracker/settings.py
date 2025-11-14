@@ -123,15 +123,34 @@ elif ENVIRONMENT == 'railway':
         )
     }
 elif ENVIRONMENT == 'seenode':
-    # Seenode uses PostgreSQL via DATABASE_URL (with SSL required)
-    import dj_database_url
-    DATABASES = {
-        'default': dj_database_url.config(
-            default=os.environ.get('DATABASE_URL'),
-            conn_max_age=600,
-            ssl_require=True,
-        )
-    }
+    # Seenode uses PostgreSQL via DATABASE_URL or individual parameters
+    database_url = os.environ.get('DATABASE_URL')
+
+    if database_url:
+        # Use DATABASE_URL if provided
+        import dj_database_url
+        DATABASES = {
+            'default': dj_database_url.config(
+                default=database_url,
+                conn_max_age=600,
+                ssl_require=True,
+            )
+        }
+    else:
+        # Fallback to individual parameters
+        DATABASES = {
+            'default': {
+                'ENGINE': 'django.db.backends.postgresql',
+                'NAME': os.environ.get('DB_NAME', ''),
+                'USER': os.environ.get('DB_USER', ''),
+                'PASSWORD': os.environ.get('DB_PASSWORD', ''),
+                'HOST': os.environ.get('DB_HOST', ''),
+                'PORT': os.environ.get('DB_PORT', '5432'),
+                'OPTIONS': {
+                    'sslmode': 'require',
+                },
+            }
+        }
 elif ENVIRONMENT == 'pythonanywhere':
     # PythonAnywhere can use either SQLite or MySQL
     # Check if DATABASE_URL is provided, otherwise use SQLite
