@@ -44,18 +44,19 @@ Use this checklist to ensure a smooth deployment to Seenode.
 - [ ] Set **Port**: `80`
 - [ ] ⚠️ **IMPORTANT**: Port must match the port in start command!
 
-### Step 4: Link Database
-- [ ] Go to "Environment" tab
-- [ ] Click "Link Database"
-- [ ] Select your PostgreSQL database
-- [ ] Verify `DATABASE_URL` appears in environment variables
+### Step 4: Get Database Connection URL
+- [ ] Go to your PostgreSQL database in Seenode dashboard
+- [ ] Find "Connection Details" or "Connection String"
+- [ ] Copy the full `DATABASE_URL` (format: `postgresql://user:password@host:port/database`)
+- [ ] Keep this ready for the next step
 
 ### Step 5: Set Environment Variables
-Add these variables in the Environment tab:
+Add these variables in the **Variables** tab (click "+ Add variable" for each):
 
 - [ ] `ENVIRONMENT` = `seenode`
 - [ ] `DEBUG` = `False`
 - [ ] `SECRET_KEY` = `<your-generated-secret-key>`
+- [ ] `DATABASE_URL` = `<your-database-connection-string>`
 - [ ] `ALLOWED_HOSTS` = `your-app.seenode.app` (update after first deploy)
 - [ ] `SEENODE_DOMAIN` = `your-app.seenode.app` (update after first deploy)
 
@@ -89,7 +90,7 @@ Add these variables in the Environment tab:
 After first successful deployment:
 
 - [ ] Note your actual Seenode URL (e.g., `your-app.seenode.app`)
-- [ ] Go back to Environment tab
+- [ ] Go back to **Variables** tab
 - [ ] Update `ALLOWED_HOSTS` with actual domain
 - [ ] Update `SEENODE_DOMAIN` with actual domain
 - [ ] Save changes
@@ -143,10 +144,11 @@ After first successful deployment:
 
 ### If Database Connection Fails
 - [ ] Verify database is created and running
-- [ ] Check that database is linked in Environment tab
-- [ ] Verify `DATABASE_URL` appears in environment variables
+- [ ] Check that `DATABASE_URL` is set correctly in Variables tab
+- [ ] Verify the connection string format: `postgresql://user:pass@host:port/db`
 - [ ] Check that `psycopg2-binary` is in `requirements.txt`
 - [ ] Review database logs in Seenode dashboard
+- [ ] Test connection string from your database dashboard
 
 ### If CSRF Errors Occur
 - [ ] Verify `SEENODE_DOMAIN` is set correctly

@@ -79,22 +79,23 @@ gunicorn expensetracker.wsgi --bind 0.0.0.0:80
 - **IMPORTANT:** This must match the port in your start command
 - Seenode does NOT use a `PORT` environment variable
 
-### 6. Link Your Database
+### 6. Get Your Database Connection URL
 
-1. In the **Environment** tab of your web service
-2. Click **"Link Database"**
-3. Select the PostgreSQL database you created earlier
-4. Seenode will automatically set the `DATABASE_URL` environment variable
+1. Go to your PostgreSQL database in the Seenode dashboard
+2. Find the **Connection Details** or **Connection String**
+3. Copy the full `DATABASE_URL` (format: `postgresql://user:password@host:port/database`)
+4. Keep this handy for the next step
 
 ### 7. Configure Environment Variables
 
-In the **Environment** tab, add the following variables:
+In the **Variables** tab (visible in your web service dashboard), add the following variables:
 
 | Variable | Value | Description |
 |----------|-------|-------------|
 | `ENVIRONMENT` | `seenode` | Tells Django to use Seenode configuration |
 | `DEBUG` | `False` | Disable debug mode in production |
 | `SECRET_KEY` | `<your-secret-key>` | Generate a new one (see below) |
+| `DATABASE_URL` | `postgresql://user:pass@host:port/db` | Copy from your database connection details |
 | `ALLOWED_HOSTS` | `your-app.seenode.app` | Your Seenode domain (update after deployment) |
 | `SEENODE_DOMAIN` | `your-app.seenode.app` | For CSRF protection (update after deployment) |
 
@@ -123,7 +124,7 @@ Select your preferred instance size:
 After your first deployment:
 
 1. Note your service URL (e.g., `your-app.seenode.app`)
-2. Go back to the **Environment** tab
+2. Go back to the **Variables** tab
 3. Update these variables with your actual domain:
    - `ALLOWED_HOSTS` = `your-app.seenode.app`
    - `SEENODE_DOMAIN` = `your-app.seenode.app`
