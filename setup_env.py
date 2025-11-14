@@ -11,7 +11,8 @@ import sys
 ENVIRONMENTS = {
     '1': ('local', '.env.local.example'),
     '2': ('railway', '.env.railway.example'),
-    '3': ('pythonanywhere', '.env.pythonanywhere.example'),
+    '3': ('seenode', '.env.seenode.example'),
+    '4': ('pythonanywhere', '.env.pythonanywhere.example'),
 }
 
 def main():
@@ -23,10 +24,11 @@ def main():
     print()
     print("1. Local Development (SQLite, Debug mode)")
     print("2. Railway (PostgreSQL, Gunicorn, WhiteNoise)")
-    print("3. PythonAnywhere (SQLite/MySQL)")
+    print("3. Seenode (PostgreSQL, Gunicorn, WhiteNoise)")
+    print("4. PythonAnywhere (SQLite/MySQL)")
     print()
-    
-    choice = input("Enter your choice (1-3): ").strip()
+
+    choice = input("Enter your choice (1-4): ").strip()
     
     if choice not in ENVIRONMENTS:
         print("Invalid choice. Exiting.")
@@ -69,6 +71,17 @@ def main():
         print("4. Deploy your code to Railway")
         print("5. Run migrations: railway run python manage.py migrate")
     elif choice == '3':
+        print("1. Edit .env and set your SECRET_KEY and SEENODE_DOMAIN")
+        print("2. Push your code to GitHub/GitLab")
+        print("3. Create PostgreSQL database in Seenode dashboard")
+        print("4. Create Web Service and link your repository")
+        print("5. Set environment variables in Seenode dashboard")
+        print("6. Configure build command: ./build.sh")
+        print("7. Configure start command: gunicorn expensetracker.wsgi --bind 0.0.0.0:80")
+        print("8. Set Port to 80 in Seenode dashboard")
+        print("9. Deploy and monitor logs")
+        print("10. See SEENODE_DEPLOYMENT.md for detailed instructions")
+    elif choice == '4':
         print("1. Edit .env and set your SECRET_KEY and PYTHONANYWHERE_DOMAIN")
         print("2. Upload your code to PythonAnywhere")
         print("3. Configure WSGI file with environment variables")

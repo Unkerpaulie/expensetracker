@@ -47,6 +47,7 @@ This application supports multiple deployment platforms:
 
 - **Local Development** - SQLite database, Django dev server
 - **Railway** - PostgreSQL, Gunicorn, WhiteNoise for static files
+- **Seenode** - PostgreSQL, Gunicorn, WhiteNoise for static files (Recommended)
 - **PythonAnywhere** - SQLite or MySQL, PythonAnywhere hosting
 
 ### Quick Deployment Links
@@ -69,11 +70,11 @@ This will help you create the appropriate `.env` file for your deployment target
 
 The application uses environment variables for configuration. Key variables:
 
-- `ENVIRONMENT` - Set to `local`, `railway`, or `pythonanywhere`
+- `ENVIRONMENT` - Set to `local`, `railway`, `seenode`, or `pythonanywhere`
 - `DEBUG` - Enable/disable debug mode (`True` or `False`)
 - `SECRET_KEY` - Django secret key (generate a new one for production)
 - `ALLOWED_HOSTS` - Comma-separated list of allowed hosts
-- `DATABASE_URL` - Database connection string (for Railway/PythonAnywhere)
+- `DATABASE_URL` - Database connection string (for Railway/Seenode/PythonAnywhere)
 
 See [`.env.example`](.env.example) for a complete list of available variables.
 

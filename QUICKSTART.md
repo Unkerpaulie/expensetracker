@@ -47,6 +47,36 @@ railway run python manage.py createsuperuser
 
 ---
 
+### Seenode Deployment
+
+```bash
+# 1. Push to GitHub
+git add .
+git commit -m "Add Seenode deployment configuration"
+git push
+
+# 2. In Seenode Dashboard:
+# - Create PostgreSQL database
+# - Create Web Service from your Git repo
+# - Link the database
+# - Set build command: ./build.sh
+# - Set start command: gunicorn expensetracker.wsgi --bind 0.0.0.0:80
+# - Set Port to: 80
+# - Add environment variables:
+ENVIRONMENT=seenode
+DEBUG=False
+SECRET_KEY=<generate-new-key>
+SEENODE_DOMAIN=<your-app>.seenode.app
+ALLOWED_HOSTS=<your-app>.seenode.app
+
+# 3. Deploy and create superuser via console
+python manage.py createsuperuser
+```
+
+**📖 Detailed Guide:** See `SEENODE_DEPLOYMENT.md`
+
+---
+
 ### PythonAnywhere Deployment
 
 ```bash
@@ -100,8 +130,11 @@ python setup_env.py  # Select 1
 # Switch to Railway (for testing)
 python setup_env.py  # Select 2
 
-# Switch to PythonAnywhere (for testing)
+# Switch to Seenode (for testing)
 python setup_env.py  # Select 3
+
+# Switch to PythonAnywhere (for testing)
+python setup_env.py  # Select 4
 ```
 
 ---

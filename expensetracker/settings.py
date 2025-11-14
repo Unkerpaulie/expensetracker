@@ -17,7 +17,7 @@ from pathlib import Path
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Environment detection
-# Set ENVIRONMENT variable to 'local', 'railway', or 'pythonanywhere'
+# Set ENVIRONMENT variable to 'local', 'railway', 'pythonanywhere', or 'seenode'
 # Defaults to 'local' if not set
 ENVIRONMENT = os.environ.get('ENVIRONMENT', 'local')
 
@@ -37,6 +37,10 @@ elif ENVIRONMENT == 'railway':
     ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '').split(',')
     if not ALLOWED_HOSTS or ALLOWED_HOSTS == ['']:
         ALLOWED_HOSTS = ['*']  # Fallback for Railway
+elif ENVIRONMENT == 'seenode':
+    ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '').split(',')
+    if not ALLOWED_HOSTS or ALLOWED_HOSTS == ['']:
+        ALLOWED_HOSTS = ['*']  # Fallback for Seenode
 elif ENVIRONMENT == 'pythonanywhere':
     ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'unkerpaulie.pythonanywhere.com').split(',')
 else:
@@ -63,8 +67,8 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
 ]
 
-# Add WhiteNoise for Railway (static file serving)
-if ENVIRONMENT == 'railway':
+# Add WhiteNoise for Railway and Seenode (static file serving)
+if ENVIRONMENT in ['railway', 'seenode']:
     MIDDLEWARE.append('whitenoise.middleware.WhiteNoiseMiddleware')
 
 MIDDLEWARE += [
@@ -116,6 +120,16 @@ elif ENVIRONMENT == 'railway':
             default=os.environ.get('DATABASE_URL'),
             conn_max_age=600,
             conn_health_checks=True,
+        )
+    }
+elif ENVIRONMENT == 'seenode':
+    # Seenode uses PostgreSQL via DATABASE_URL (with SSL required)
+    import dj_database_url
+    DATABASES = {
+        'default': dj_database_url.config(
+            default=os.environ.get('DATABASE_URL'),
+            conn_max_age=600,
+            ssl_require=True,
         )
     }
 elif ENVIRONMENT == 'pythonanywhere':
@@ -186,10 +200,10 @@ STATIC_URL = 'static/'
 if ENVIRONMENT == 'local':
     # Local development doesn't need STATIC_ROOT
     pass
-elif ENVIRONMENT == 'railway':
-    # Railway needs STATIC_ROOT for WhiteNoise
+elif ENVIRONMENT in ['railway', 'seenode']:
+    # Railway and Seenode need STATIC_ROOT for WhiteNoise
     STATIC_ROOT = BASE_DIR / 'staticfiles'
-    # WhiteNoise configuration for Railway
+    # WhiteNoise configuration for Railway and Seenode
     STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 elif ENVIRONMENT == 'pythonanywhere':
     # PythonAnywhere needs STATIC_ROOT
@@ -213,6 +227,13 @@ if ENVIRONMENT == 'railway':
     else:
         # Fallback to your specific Railway domain
         CSRF_TRUSTED_ORIGINS = ['https://expensetracker-production-b92e.up.railway.app']
+elif ENVIRONMENT == 'seenode':
+    seenode_url = os.environ.get('SEENODE_DOMAIN', '')
+    if seenode_url:
+        CSRF_TRUSTED_ORIGINS = [f'https://{seenode_url}']
+    else:
+        # Will be set via environment variable
+        CSRF_TRUSTED_ORIGINS = []
 elif ENVIRONMENT == 'pythonanywhere':
     pythonanywhere_url = os.environ.get('PYTHONANYWHERE_DOMAIN', 'unkerpaulie.pythonanywhere.com')
     CSRF_TRUSTED_ORIGINS = [f'https://{pythonanywhere_url}']
