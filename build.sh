@@ -15,6 +15,7 @@ echo "Running database migrations..."
 echo "=== Database Configuration Check ==="
 python -c "
 import os
+print('ALLOWED_HOSTS:', os.environ.get('ALLOWED_HOSTS', 'NOT SET'))
 print('ENVIRONMENT:', os.environ.get('ENVIRONMENT', 'NOT SET'))
 print('DATABASE_URL:', 'SET' if os.environ.get('DATABASE_URL') else 'NOT SET')
 print('DB_NAME:', os.environ.get('DB_NAME', 'NOT SET'))
